@@ -1,22 +1,29 @@
 import './App.css'
-import Header from "./Components/Header/Header.tsx";
-import Menu from "./Components/Menu/Menu.tsx";
-import Content from "./Components/Content/Content.tsx";
+
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import {Provider} from "react-redux";
+import {generalStore} from "./store";
+import HomePage from "./Pages/Home.tsx";
+import RootLayout from "./Pages/Root.tsx";
+
 
 function App() {
 
+    const router = createBrowserRouter([
+        {
+            path: '/',
+            element: <RootLayout/>,
+            children: [
+                {path: 'home', element: <HomePage/>}
+            ]
+        }
+    ]);
 
     return (
         <>
-            <div>
-                <div>
-                    <Header/>
-                </div>
-                <div className="flex">
-                    <Menu/>
-                    <Content/>
-                </div>
-            </div>
+            <Provider store={generalStore}>
+                <RouterProvider router={router}/>
+            </Provider>
         </>
     )
 }

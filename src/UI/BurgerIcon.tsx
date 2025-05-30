@@ -5,10 +5,12 @@ type Props = {
     width?: number;
     height?: number;
     color?: string;
+    handleMenu:()=> void
 };
 
-const BurgerIcon: React.FC<Props> = ({ width = 24, height = 24, color = "#000" }) => (
+const BurgerIcon: React.FC<Props> = ({ width = 24, height = 24, color = "#000" ,handleMenu }) => (
     <svg
+        onClick={handleMenu}
         width={width}
         height={height}
         viewBox="0 0 24 24"
