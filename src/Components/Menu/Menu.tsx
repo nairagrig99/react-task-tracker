@@ -1,29 +1,36 @@
-import {Link} from "react-router-dom";
-import {useSelector} from "react-redux";
-import type {RootState} from "../../store";
-import {useEffect} from "react";
-
+import {Link, useLoaderData} from "react-router-dom";
+import type {ProjectState} from "../../models/project-state.interface.ts";
 
 const Menu = () => {
 
-    const createProj = useSelector((state: RootState) => state.projectSlice.projects);
+    // const createProj = useSelector((state: RootState) => state.projectSlice.projects);
 
-    useEffect(() => {
-        console.log('createProj',createProj)
-    }, [createProj]);
+    const menuItems:ProjectState[] = useLoaderData();
+
+    // console.log('menu items', menuItems);
 
     return (
         <div className="bg-[#565454] text-white w-64 h-screen border-r">
             <Link to="home">Home</Link> <br/>
-            {createProj.map((project)=>
-                <div  key={project.projectName}>
-                    <Link to='/'>{project.projectName}</Link>
+            {
+                menuItems.map((project) =>
+                <div key={project["id"]} className="border-b border-solid  p-[5px]">
+                    <Link
+                        to={{
+                            pathname: `/${project["id"]}`,
+                        }}
+                        state={{
+                            data: project,
+                        }}
+                        className="capitalize text-[#0aea0a]"
+                    >
+                        {project["projectName"]}
+                    </Link>
                     <br/>
                 </div>
-             )}
+            )}
         </div>
     )
-
-
 }
+
 export default Menu;

@@ -2,10 +2,10 @@ import './App.css'
 
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {Provider} from "react-redux";
-import {generalStore} from "./store";
-import HomePage from "./Pages/Home.tsx";
-import RootLayout from "./Pages/Root.tsx";
-
+import { generalStore} from "./store";
+import HomePage, {createProjectHandler} from "./Pages/Home.tsx";
+import RootLayout, {eventProjectLoader} from "./Pages/Root.tsx";
+import ProjectPage, {taskAction} from "./Pages/Project.tsx";
 
 function App() {
 
@@ -13,8 +13,18 @@ function App() {
         {
             path: '/',
             element: <RootLayout/>,
+            loader: eventProjectLoader,
             children: [
-                {path: 'home', element: <HomePage/>}
+                {
+                    path: 'home',
+                    element: <HomePage/>,
+                    action: createProjectHandler
+                },
+                {
+                    path: ':id',
+                    element: <ProjectPage/>,
+                    action:taskAction
+                },
             ]
         }
     ]);
