@@ -7,7 +7,6 @@ import DragBlock from "../DragBlock.tsx";
 
 export default function TaskListItem() {
     const [dragItem, setDragItem] = useState();
-
     const project = useSelector((state: RootState) => state.projectSlice.projects);
     const params = useParams();
 
@@ -19,7 +18,6 @@ export default function TaskListItem() {
     const filtered: ProjectState | undefined = project.find((item: ProjectState) => +item.id === id);
 
     const dragElement = (event) => {
-        console.log('event',event);
         setDragItem(event)
     }
 
@@ -27,7 +25,7 @@ export default function TaskListItem() {
         <div className="flex flex-col gap-4  w-[370px]">
             {filtered?.taskList.map((item) => (
                 <div onMouseDown={(event) => dragElement(event)}
-                     className="w-[250px] border px-2.5 py-3 rounded-md task-item cursor-pointer" key={item.id}>
+                     className="w-[250px]  border px-2.5 py-3 rounded-md task-item cursor-pointer" key={item.id}>
                     <h2 className="capitalize mb-3">{item.name}</h2>
                     <div className="flex gap-2.5">
                         <p className="capitalize px-[5px] py-[2px] rounded-[15px] bg-[#c8c09b] text-black">{item.priority}</p>

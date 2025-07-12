@@ -1,11 +1,16 @@
-import  { useRef} from "react";
+import {useRef} from "react";
 import type {Props} from "../models/props-interface.tsx";
+import {useSelector} from "react-redux";
+import type {RootState} from "../store";
 
 const DragBlock = ({event}: Props) => {
 
-    const inProgressRef = useRef<HTMLDivElement>(null)
-    const completeRef = useRef<HTMLDivElement>(null)
-    const draftRef = useRef<HTMLDivElement>(null)
+    const inProgressRef = useRef<HTMLDivElement>(null);
+    const completeRef = useRef<HTMLDivElement>(null);
+    const draftRef = useRef<HTMLDivElement>(null);
+
+    const isMenuOpen = useSelector((state: RootState) => state.store);
+    console.log('isMenuOpen', isMenuOpen.toggleMenu);
 
     if (event?.target) {
         const recursionFindParentElement = (element: HTMLElement | null, parentClass: string) => {
@@ -18,59 +23,63 @@ const DragBlock = ({event}: Props) => {
 
         const taskItem = recursionFindParentElement(event.target, 'task-item') as HTMLElement;
 
-        if (taskItem != null) {
-
-            const shiftX = event.pageX - taskItem.getBoundingClientRect().left;
+        if (taskItem) {
+            const shiftX = event.screenX - taskItem.getBoundingClientRect().left;
             const shiftY = event.pageY - taskItem.getBoundingClientRect().top;
 
             taskItem.style.zIndex = "1000";
             taskItem.style.position = "absolute";
 
             const moveAt = (x: number, y: number) => {
-                taskItem.style.left = x - shiftX + 'px';
+                if (isMenuOpen.toggleMenu) {
+                    taskItem.style.left = x - shiftX - taskItem.offsetWidth + 'px';
+                } else {
+                    taskItem.style.left = x - shiftX + 'px';
+                }
                 taskItem.style.top = y - shiftY - taskItem.offsetHeight + 'px';
             }
 
             moveAt(event.pageX, event.pageY);
+
             const onMouseMove = (event) => {
-                moveAt(event.pageX, event.pageY);
+                moveAt(event.pageX, event.pageY); // Use pageX/pageY
             }
 
-            const progressBlock = inProgressRef.current?.getBoundingClientRect();
-            const completeBlock = completeRef.current?.getBoundingClientRect();
-            const draftBlock = draftRef.current?.getBoundingClientRect();
-
             const onMouseUp = (event) => {
-
-                const taskItemPosition = taskItem?.getBoundingClientRect();
+                const taskItemPosition = taskItem.getBoundingClientRect();
                 const removeStyle = () => {
                     taskItem.style.left = 'unset';
                     taskItem.style.top = 'unset';
                     taskItem.style.position = 'unset';
+                    taskItem.style.zIndex = 'unset';
                 }
                 const checkPlace = (task, htmlContent) => {
-
-                    return (task.left >= htmlContent.left &&
+                    return task && htmlContent &&
+                        task.left >= htmlContent.left &&
                         task.right <= htmlContent.right &&
                         task.top >= htmlContent.top &&
-                        task.bottom <= htmlContent.bottom)
+                        task.bottom <= htmlContent.bottom;
                 }
+
+                const progressBlock = inProgressRef.current?.getBoundingClientRect();
+                const completeBlock = completeRef.current?.getBoundingClientRect();
+                const draftBlock = draftRef.current?.getBoundingClientRect();
 
                 if (checkPlace(taskItemPosition, progressBlock)) {
                     inProgressRef.current.append(taskItem);
-                    removeStyle()
+                    removeStyle();
                 } else if (checkPlace(taskItemPosition, completeBlock)) {
                     completeRef.current.append(taskItem);
-                    removeStyle()
+                    removeStyle();
                 } else if (checkPlace(taskItemPosition, draftBlock)) {
                     draftRef.current.append(taskItem);
-                    removeStyle()
+                    removeStyle();
                 } else {
-                    // taskItem.style.position = 'unset';
-                    document.removeEventListener('mousemove', onMouseMove);
-                    document.removeEventListener('mouseup', onMouseUp);
+                    removeStyle(); // Reset styles even if dropped outside
                 }
 
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
             }
 
             document.addEventListener('mousemove', onMouseMove);

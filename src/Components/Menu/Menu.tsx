@@ -2,15 +2,10 @@ import {Link, useLoaderData} from "react-router-dom";
 import type {ProjectState} from "../../models/project-state.interface.ts";
 
 const Menu = () => {
-
-    // const createProj = useSelector((state: RootState) => state.projectSlice.projects);
-
     const menuItems:ProjectState[] = useLoaderData();
 
-    // console.log('menu items', menuItems);
-
     return (
-        <div className="bg-[#565454] text-white w-64 h-screen border-r">
+        <div className="bg-[#565454] min-w-[250px] text-white w-64 h-screen border-r">
             <Link to="home">Home</Link> <br/>
             {
                 menuItems.map((project) =>
