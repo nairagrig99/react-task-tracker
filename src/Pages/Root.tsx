@@ -21,3 +21,14 @@ export default function RootLayout() {
         </>
     )
 }
+
+export async function eventProjectLoader() {
+    try {
+        const response = await fetch('http://localhost:3000/projects');
+
+        return await response.json();
+    } catch (error) {
+
+        throw new Response(JSON.stringify({error: true, message: `Fetch is failed ${error}`}));
+    }
+}

@@ -1,8 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
-    toggleMenu: true,
-    isModal: false
+    toggleMenu: false
 }
 
 const store = createSlice({
@@ -11,9 +10,6 @@ const store = createSlice({
     reducers: {
         toggleMenu(state) {
             state.toggleMenu = !state.toggleMenu;
-        },
-        openModal(state) {
-            state.isModal = !state.isModal
         }
     }
 })

@@ -1,18 +1,17 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import type {ProjectState} from "../models/project-state.interface.ts";
 
-interface Project {
-    projectName: string;
-    taskList?: []
+export const fetchSlice = createAsyncThunk('projects/fetchAll', async () => {
+    const request = await fetch('http://localhost:3000/projects');
+    return await request.json();
+})
+
+interface InitialState {
+    projects: ProjectState[];
 }
 
-interface ProjectState {
-    projects: Project[];
-    taskList: []
-}
-
-const initialState: ProjectState = {
-    projects: [],
-    taskList: []
+const initialState: InitialState = {
+    projects: []
 };
 
 const projectSlice = createSlice({
@@ -21,10 +20,19 @@ const projectSlice = createSlice({
     reducers: {
         createProject(state, action) {
             state.projects.push({
+                id: action.payload.id,
                 projectName: action.payload.projectName,
-                taskList: state.taskList
+                taskList: action.payload.taskList ?? []
             });
-        }
+        },
+
+    },
+    extraReducers: (builder) => {
+        builder.addCase(fetchSlice.fulfilled, (state, action) => {
+            state.projects = action.payload;
+        }).addCase(fetchSlice.rejected,(state, action)=>{
+            console.log('error',action.error.message)
+        })
     }
 })
 
